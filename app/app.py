@@ -4,23 +4,30 @@ import pytesseract
 from PIL import Image
 from docx import Document
 import streamlit as st
+
+# ✅ Importação segura do spaCy com fallback
 import spacy
+try:
+    nlp = spacy.load("pt_core_news_sm")
+except:
+    import os
+    os.system("python -m spacy download pt_core_news_sm")
+    nlp = spacy.load("pt_core_news_sm")
 
-# Caminho Tesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# Caminho Tesseract (funciona apenas localmente – no Streamlit Cloud precisa adaptar)
+# Se estiver no Streamlit Cloud, essa linha deve ser ignorada
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-# Carrega modelo spaCy
-nlp = spacy.load("pt_core_news_sm")
-
-# Caminho da pasta de currículos
-PASTA_CURRICULOS = os.path.join(os.path.dirname(__file__), '..', 'curriculos')
+# Caminho da pasta de currículos (certifique-se de que ela exista)
+PASTA_CURRICULOS = os.path.join(os.path.dirname(__file__), 'curriculos')
+os.makedirs(PASTA_CURRICULOS, exist_ok=True)
 
 # 🧠 NLP: gera variações lematizadas da palavra e sinônimos simples
 def gerar_variacoes(palavra):
     doc = nlp(palavra)
     lemas = set([token.lemma_.lower() for token in doc])
-    
-    # Sinônimos manuais (pode ser expandido conforme o contexto)
+
     sinonimos = {
         "limpeza": ["faxina", "faxineira", "zeladoria"],
         "motorista": ["condutor", "piloto", "chauffeur"],
@@ -71,7 +78,7 @@ def extrair_texto(caminho):
     else:
         return ''
 
-# 🔍 Busca com nova lógica de pontuação
+# 🔍 Busca com lógica de pontuação
 def buscar_palavra(palavra):
     resultados = []
     variacoes = gerar_variacoes(palavra)
@@ -88,11 +95,11 @@ def buscar_palavra(palavra):
             for termo in variacoes:
                 ocorrencias = texto_limpo.count(termo.lower())
                 total_ocorrencias += ocorrencias
-                score += ocorrencias * 1  # 1 ponto por ocorrência ou sinônimo
+                score += ocorrencias * 1
 
             trecho_inicial = texto_limpo[:500]
             if any(v in trecho_inicial for v in variacoes):
-                score += 5  # bônus se aparecer no início
+                score += 5
 
             trecho_destacado = "(Trecho não encontrado)"
             for termo in variacoes:
@@ -146,6 +153,3 @@ if st.button("Buscar"):
                     st.download_button(label="📥 Baixar", data=f, file_name=item["arquivo"], mime="application/octet-stream")
         else:
             st.error("Nenhum currículo encontrado com essa palavra.")
-
-
-#streamlit run app.py
