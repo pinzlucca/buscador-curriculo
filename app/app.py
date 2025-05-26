@@ -4,22 +4,16 @@ import pytesseract
 from PIL import Image
 from docx import Document
 import streamlit as st
-
-# ✅ Importação segura do spaCy com fallback
 import spacy
-try:
-    nlp = spacy.load("pt_core_news_sm")
-except:
-    import os
-    os.system("python -m spacy download pt_core_news_sm")
-    nlp = spacy.load("pt_core_news_sm")
 
-# Caminho Tesseract (funciona apenas localmente – no Streamlit Cloud precisa adaptar)
-# Se estiver no Streamlit Cloud, essa linha deve ser ignorada
+# ✅ Carrega modelo spaCy (pré-instalado via install.sh no deploy)
+nlp = spacy.load("pt_core_news_sm")
+
+# Caminho do Tesseract (usado apenas localmente; ignore no Streamlit Cloud)
 if os.name == "nt":
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-# Caminho da pasta de currículos (certifique-se de que ela exista)
+# Caminho da pasta de currículos
 PASTA_CURRICULOS = os.path.join(os.path.dirname(__file__), 'curriculos')
 os.makedirs(PASTA_CURRICULOS, exist_ok=True)
 
