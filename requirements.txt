@@ -1,5 +1,6 @@
 streamlit
 pdfplumber
-python-docx
 pytesseract
-Pillow
+pillow
+python-docx
+spacy
