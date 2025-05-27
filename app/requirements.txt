@@ -1,0 +1,7 @@
+streamlit
+pdfplumber
+pytesseract
+pillow
+python-docx
+spacy
+pt-core-news-sm
