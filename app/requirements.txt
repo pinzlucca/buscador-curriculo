@@ -3,5 +3,6 @@ pdfplumber
 pytesseract
 pillow
 python-docx
-spacy
-pt-core-news-sm
+spacy==3.5.0
+pt-core-news-sm==3.5.0
+
