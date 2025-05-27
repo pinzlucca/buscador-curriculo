@@ -7,7 +7,12 @@ import streamlit as st
 import spacy
 
 # ✅ Carrega modelo spaCy (pré-instalado via install.sh no deploy)
-nlp = spacy.load("pt_core_news_sm")
+try:
+    nlp = spacy.load("pt_core_news_sm")
+except OSError:
+    import spacy.cli
+    spacy.cli.download("pt_core_news_sm")
+    nlp = spacy.load("pt_core_news_sm")
 
 # Caminho do Tesseract (usado apenas localmente; ignore no Streamlit Cloud)
 if os.name == "nt":
