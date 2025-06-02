@@ -4,5 +4,3 @@ pytesseract
 pillow
 python-docx
 spacy==3.5.0
-pt-core-news-sm==3.5.0
-
